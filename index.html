@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Huella energética de la nube</title>
+<style>
+  :root {
+    --verde-oscuro: #1b4332;
+    --verde: #2d6a4f;
+    --verde-claro: #d8f3dc;
+    --verde-medio: #95d5b2;
+    --azul: #e0f2f1;
+    --texto: #1f2d25;
+    --fondo: linear-gradient(160deg, #e8f5e9 0%, #e0f2f1 100%);
+    --tarjeta: #ffffff;
+    --borde: #b7e4c7;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --verde-oscuro: #d8f3dc;
+      --verde: #52b788;
+      --verde-claro: #1b4332;
+      --verde-medio: #2d6a4f;
+      --azul: #12322b;
+      --texto: #e6f2ea;
+      --fondo: linear-gradient(160deg, #0f2419 0%, #10282b 100%);
+      --tarjeta: #17301f;
+      --borde: #2d6a4f;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--fondo);
+    color: var(--texto);
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+  main { max-width: 760px; margin: 0 auto; padding: 24px 16px 48px; }
+  header { text-align: center; margin-bottom: 20px; }
+  header .icono { font-size: 2.6rem; }
+  h1 { margin: 4px 0 8px; color: var(--verde-oscuro); font-size: clamp(1.6rem, 5vw, 2.3rem); }
+  header p { margin: 0 auto; max-width: 560px; }
+  form {
+    background: var(--tarjeta);
+    border: 1px solid var(--borde);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 14px rgba(27, 67, 50, 0.1);
+  }
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+  label { display: block; font-weight: 600; font-size: 0.92rem; color: var(--verde-oscuro); }
+  label small { display: block; font-weight: 400; color: var(--texto); opacity: 0.75; }
+  input[type="number"] {
+    width: 100%;
+    margin-top: 6px;
+    padding: 10px 12px;
+    font-size: 1rem;
+    border: 1.5px solid var(--borde);
+    border-radius: 10px;
+    background: var(--azul);
+    color: var(--texto);
+  }
+  input[type="number"]:focus { outline: 3px solid var(--verde-medio); border-color: var(--verde); }
+  button {
+    display: block;
+    width: 100%;
+    margin-top: 20px;
+    padding: 14px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, #2d6a4f, #40916c);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.1s, opacity 0.2s;
+  }
+  button:hover:not(:disabled) { transform: translateY(-1px); }
+  button:disabled { opacity: 0.65; cursor: wait; }
+  #resultado {
+    display: none;
+    margin-top: 20px;
+    padding: 18px;
+    background: var(--verde-claro);
+    border: 2px solid var(--verde-medio);
+    border-radius: 14px;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+  }
+  #resultado.error { background: #fdecea; border-color: #e57373; color: #7f1d1d; }
+  footer { text-align: center; margin-top: 20px; font-size: 0.85rem; opacity: 0.8; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="icono" aria-hidden="true">🌱☁️</div>
+    <h1>Huella energética de la nube</h1>
+    <p>Cada acción digital (ver un video, enviar un correo, guardar una foto o hacer una consulta a una IA) se procesa en centros de datos que consumen energía. Esta página estima tu huella.</p>
+  </header>
+
+  <form id="formulario">
+    <div class="grid">
+      <label>🎬 Video en streaming
+        <small>horas al día (YouTube, Netflix, TikTok)</small>
+        <input type="number" name="video" min="0" step="any" value="0" required>
+      </label>
+      <label>🎵 Música en streaming
+        <small>horas al día</small>
+        <input type="number" name="musica" min="0" step="any" value="0" required>
+      </label>
+      <label>📱 Redes sociales
+        <small>horas al día</small>
+        <input type="number" name="redes" min="0" step="any" value="0" required>
+      </label>
+      <label>💻 Videollamadas
+        <small>horas a la semana</small>
+        <input type="number" name="videollamadas" min="0" step="any" value="0" required>
+      </label>
+      <label>🎮 Juegos en línea
+        <small>horas al día</small>
+        <input type="number" name="juegos" min="0" step="any" value="0" required>
+      </label>
+      <label>🗂️ Almacenamiento en la nube
+        <small>GB guardados (fotos, archivos)</small>
+        <input type="number" name="nube" min="0" step="any" value="0" required>
+      </label>
+      <label>🤖 Consultas a chatbots de IA
+        <small>consultas al día</small>
+        <input type="number" name="ia" min="0" step="any" value="0" required>
+      </label>
+      <label>✉️ Correos enviados
+        <small>correos al día</small>
+        <input type="number" name="correos" min="0" step="any" value="0" required>
+      </label>
+    </div>
+    <button type="submit" id="btn">Calcular mi huella</button>
+  </form>
+
+  <div id="resultado" role="status" aria-live="polite"></div>
+  <footer>Estimación aproximada con fines educativos.</footer>
+</main>
+
+<script>
+  // Pega aquí la URL del webhook de Make (Webhooks > Custom webhook)
+  const WEBHOOK_URL = "https://hook.us2.make.com/55k26ato49okbdenrkfwb943m80gdz7z";
+
+  const CAMPOS = ["video", "musica", "redes", "videollamadas", "juegos", "nube", "ia", "correos"];
+  const form = document.getElementById("formulario");
+  const btn = document.getElementById("btn");
+  const caja = document.getElementById("resultado");
+
+  function mostrar(texto, esError) {
+    caja.textContent = texto;
+    caja.className = esError ? "error" : "";
+    caja.style.display = "block";
+  }
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const datos = new URLSearchParams();
+    CAMPOS.forEach(function (n) {
+      const v = parseFloat(form.elements[n].value);
+      datos.append(n, isNaN(v) || v < 0 ? 0 : v);
+    });
+
+    const textoOriginal = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "Calculando...";
+    mostrar("Calculando...", false);
+
+    try {
+      const resp = await fetch(WEBHOOK_URL, { method: "POST", body: datos });
+      if (!resp.ok) throw new Error("HTTP " + resp.status);
+      const texto = await resp.text();
+      mostrar(texto, false);
+    } catch (err) {
+      mostrar("No se pudo calcular, intenta de nuevo.", true);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = textoOriginal;
+    }
+  });
+</script>
+</body>
+</html>
